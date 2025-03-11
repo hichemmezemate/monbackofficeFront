@@ -1,0 +1,17 @@
+<app-navbar></app-navbar>
+<main>
+    <mat-tab-group (selectedTabChange)="onTabChange($event)">
+        <mat-tab label="Tout les produits">
+            <app-new-table [products]="products"></app-new-table>
+        </mat-tab>
+        <mat-tab label="Poissons">
+            <app-new-table [products]="poissons"></app-new-table>
+        </mat-tab>
+        <mat-tab label="Crustacés">
+            <app-new-table [products]="crustaces"></app-new-table>
+        </mat-tab>
+        <mat-tab label="Fruits de mer">
+            <app-new-table [products]="fruitsdemer"></app-new-table>
+        </mat-tab>
+    </mat-tab-group>
+</main>

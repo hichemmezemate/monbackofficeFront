@@ -1,0 +1,31 @@
+.toEdit {
+    color: rgb(49, 49, 255);
+}
+
+.inputEdit {
+    position: relative;
+    width: 30px;
+}
+
+/* 1. Prevent overflow and scrolling in the table container */
+.tableContainer {
+    width: 100%;
+    height: fit-content; /* or any height you want to set */
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+
+/* 2. Prevent scrolling inside the table itself */
+table.mat-elevation-z8 {
+    width: 100%;
+    overflow: hidden; /* Disable overflow for the table */
+    table-layout: fixed; /* Fixed table layout to avoid overflow */
+    border-collapse: collapse; /* Make sure table borders collapse neatly */
+}
+
+/* Optional: styling for the button-container */
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
