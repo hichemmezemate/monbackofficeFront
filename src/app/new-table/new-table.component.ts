@@ -16,7 +16,7 @@ import { ProductsService } from '../services/products.service';
 export class NewTableComponent {
   @Input() products: any[] = [];
   dataSource = this.products
-  displayedColumns: string[] = ['Nom', 'Prix', 'Prix en promo', 'Quantité', 'Commentaires', 'Actions']; 
+  displayedColumns: string[] = ['Nom', "Prix d'achat", "Prix de vente", 'Prix de vente en promo', 'Quantité', 'Commentaires', 'Actions']; 
   editingRowId: number | null = null;
   
   editedRows: any[] = []
@@ -30,6 +30,7 @@ export class NewTableComponent {
   initialQuantity: any
   initialPrice: any
   initialSale: any
+  initialSellPrice: any
 
 
   startEditPrice(element: any) {
@@ -46,12 +47,13 @@ export class NewTableComponent {
     this.initialQuantity = element.quantityInStock
     this.initialPrice = element.price
     this.initialSale = element.discount
+    this.initialSellPrice = element.sellprice
   }
   
   stopEdit(element: any) {
     this.editingRowId = null;
 
-    const prod = { id: element.id, newQuantity: element.quantityInStock, newPrice: element.price, newDiscount: element.discount };
+    const prod = { id: element.id, newQuantity: element.quantityInStock, newPrice: element.price, newSellPrice: element.sellprice, newDiscount: element.discount };
   
     const existingIndex = this.editedRows.findIndex(p => p.id === prod.id);
   

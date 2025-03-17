@@ -20,4 +20,12 @@ export class NavbarComponent {
     localStorage.clear()
     this.router.navigate(["/"])
   }
+
+  goDashboard() {
+    this.router.navigate(["/dashboard"])
+  }
+
+  goHome() {
+    this.router.navigate(["/interface"])
+  }
 }

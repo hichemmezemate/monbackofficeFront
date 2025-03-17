@@ -1,0 +1,99 @@
+<app-navbar></app-navbar>
+<main>
+    <mat-tab-group>
+      <mat-tab label="Résumé">
+        <mat-card class="example-card" appearance="outlined">
+
+          <mat-form-field>
+            <mat-label>Choisir une année</mat-label>
+            <mat-select [(value)]="selectedYear" (selectionChange)="onYearChange($event.value)">
+              @for (year of years; track year) {
+                <mat-option [value]="year.value">{{year.label}}</mat-option>
+                
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Choisir un mois</mat-label>
+            <mat-select [disabled]="!canSelect" [(value)]="selectedMonth" (selectionChange)="onYearChange($event.value)">
+              @for (month of months; track month) {
+                <mat-option [value]="month.value">{{month.label}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          
+          <mat-card-header>
+            <div mat-card-avatar class="example-header-image"></div>
+            <mat-card-title>Dashboard</mat-card-title>
+            <mat-card-subtitle>Resumé de transaction</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <ng-container *ngIf="resumeData; else noData">
+              <p>Chiffres D'affaire : {{ resumeData.chiffre_affaire }}</p>
+              <p>Argent Net : {{ resumeData.argent_net }}</p>
+              <p>Depenses : {{ resumeData.depenses }}</p>
+              <p>Pertes : {{ resumeData.pertes }}</p>
+            </ng-container>
+            
+            <ng-template #noData>
+              <p>Chiffres D'affaire : Non disponible</p>
+              <p>Argent Net : Non disponible</p>
+              <p>Depenses : Non disponible</p>
+              <p>Pertes : Non disponible</p>
+            </ng-template>
+          </mat-card-content>
+        </mat-card>
+        <canvas #chartCanvas></canvas>
+
+
+
+      </mat-tab>
+
+
+
+
+
+      <!-- <mat-tab label="Résumé par mois">
+        
+      </mat-tab> -->
+      <mat-tab label="Liste de transactions">
+        <div class="tableContainer">
+          <table mat-table [dataSource]="data" class="mat-elevation-z8">                      
+          
+          <ng-container matColumnDef="Date">
+              <th mat-header-cell *matHeaderCellDef> Date </th>
+              <td mat-cell *matCellDef="let element"> {{element.date_transaction}} </td>
+          </ng-container>   
+          <ng-container matColumnDef="Produit">
+            <th mat-header-cell *matHeaderCellDef> Produit </th>
+            <td mat-cell *matCellDef="let element"> {{element.productName}} </td>
+          </ng-container>  
+          
+          <ng-container matColumnDef="Type">
+            <th mat-header-cell *matHeaderCellDef> Type de transaction </th>
+            <td mat-cell *matCellDef="let element"> {{element.type_transaction}} </td>
+          </ng-container>  
+
+          <ng-container matColumnDef="Quantity">
+            <th mat-header-cell *matHeaderCellDef> Quantité </th>
+            <td mat-cell *matCellDef="let element"> {{element.quantity}} </td>
+          </ng-container> 
+          
+          <ng-container matColumnDef="Price">
+            <th mat-header-cell *matHeaderCellDef> Prix </th>
+            <td mat-cell *matCellDef="let element"> {{element.price}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="Total">
+            <th mat-header-cell *matHeaderCellDef> Total </th>
+            <td mat-cell *matCellDef="let element"> {{element.total}} </td>
+          </ng-container>
+      
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>          
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+</main>

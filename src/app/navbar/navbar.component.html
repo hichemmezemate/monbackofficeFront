@@ -1,7 +1,10 @@
 <mat-toolbar>
-    <span>Mon Petit Magasin</span>
+    <span (click)="goHome()">
+        Mon Petit Magasin
+    </span>
     <span class="example-spacer"></span>
-    <span></span>
+    <span (click)="goDashboard()">Dashboard</span>
+    <span class="example-spacer"></span>
     <button mat-icon-button (click)="logout()">
         <mat-icon>logout</mat-icon>
     </button>
