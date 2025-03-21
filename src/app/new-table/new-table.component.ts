@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { ProductsService } from '../services/products.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-new-table',
@@ -16,8 +17,9 @@ import { ProductsService } from '../services/products.service';
 export class NewTableComponent {
   @Input() products: any[] = [];
   dataSource = this.products
-  displayedColumns: string[] = ['Nom', 'Prix', 'Prix en promo', 'Quantité', 'Commentaires', 'Actions']; 
+  displayedColumns: string[] = ['Nom', "Prix d'achat", "Prix de vente", 'Prix de vente en promo', 'Quantité', 'QuantitéEdit', 'Commentaires']; 
   editingRowId: number | null = null;
+
   
   editedRows: any[] = []
   
@@ -25,50 +27,63 @@ export class NewTableComponent {
   
   access_token = localStorage.getItem("access_token")
   
-  constructor(private productsService: ProductsService) {}
+  constructor(private productsService: ProductsService, private snackBar: MatSnackBar) {}
 
   initialQuantity: any
   initialPrice: any
   initialSale: any
+  initialSellPrice: any
 
+  transaction_type: string = ''
 
-  startEditPrice(element: any) {
-    console.log("START")
-  }
+  quantityToEdit: number = 0
 
-  stopEditPrice(element: any) {
-    console.log("STOP")
-  }
-
-  
   startEdit(element: any) {
     this.editingRowId = element.id;
     this.initialQuantity = element.quantityInStock
     this.initialPrice = element.price
     this.initialSale = element.discount
+    this.initialSellPrice = element.sellprice
   }
   
   stopEdit(element: any) {
-    this.editingRowId = null;
-
-    const prod = { id: element.id, newQuantity: element.quantityInStock, newPrice: element.price, newDiscount: element.discount };
-  
-    const existingIndex = this.editedRows.findIndex(p => p.id === prod.id);
-  
-    if (existingIndex === -1) {
-      this.editedRows.push(prod);
+    if (element.type == "VENTE" && element.quantityInStock - element.quantityToEdit < 0) {
+      this.showMessage('Quantité vendue est superieure a la quantité disponible')
     } else {
-      this.editedRows[existingIndex].newQuantity = prod.newQuantity;
+      this.editingRowId = null;
+
+      const prod = { id: element.id, newQuantity: element.quantityInStock, newPrice: element.price, newSellPrice: element.sellprice, newDiscount: element.discount, type: element.type, quantityEdit: element.quantityToEdit};
+    
+      const existingIndex = this.editedRows.findIndex(p => p.id === prod.id);
+    
+      if (existingIndex === -1) {
+        this.editedRows.push(prod);
+      } else {
+        this.editedRows[existingIndex].newPrice = prod.newPrice;
+        this.editedRows[existingIndex].newSellPrice = prod.newSellPrice;
+        this.editedRows[existingIndex].newDiscount = prod.newDiscount;
+        this.editedRows[existingIndex].transactionType = prod.type; 
+        this.editedRows[existingIndex].editedQuantity = prod.quantityEdit
+      }
     }
+  }
+
+  showMessage(message: string) {
+    this.snackBar.open(message, 'Fermer', {
+      duration: 3000,
+      panelClass: ['custom-snackbar']
+    });
   }
 
   saveChange() {
     if (this.editedRows.length > 0 && this.access_token) {
         this.productsService.editQuantities(this.access_token, this.editedRows).subscribe(
           response => {
+            this.showMessage('Modification des champs réussie')
             return "Succes"
           },
           error => {
+            this.showMessage("Erreur")
             console.error('Fetching failed:', error);
           }
         )

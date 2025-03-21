@@ -15,7 +15,6 @@ export interface PeriodicElement {
   name: string;
 }
 
-
 @Component({
   selector: 'app-interface',
   imports: [NewTableComponent,MatTabsModule ,NavbarComponent, MatTableModule, MatCardModule, CommonModule, FormsModule, MatFormFieldModule, MatInputModule],

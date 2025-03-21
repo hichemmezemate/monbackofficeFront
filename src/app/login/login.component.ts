@@ -28,26 +28,12 @@ export class LoginComponent {
 
   ngOnInit() {
     const token = localStorage.getItem('access_token');
-    console.log(token)
-
     if (token) {
       this.router.navigate(['/interface']);
     }
   }
 
   login() {
-    // this.loginService.login(this.username, this.password).subscribe(
-    //   response => {
-    //     this.isLogged = true
-    //     localStorage.setItem('access_token',response.access)
-    //     localStorage.setItem('refresh_token',response.refresh)
-    //     this.router.navigate(['/interface'])
-    //   },
-    //   error => {
-    //     console.error('Login failed:', error);
-    //     this.error = "Authentification echouée"
-    //   }
-    // );
     this.loginService.login(this.username, this.password).subscribe({
       next: (data) => {
         this.isLogged = this.loginService.isAuthenticated()
