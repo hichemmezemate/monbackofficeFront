@@ -13,6 +13,9 @@ export class DashboardService {
 
   private listUrl = "http://127.0.0.1:8000/transactions/"
 
+  private sumUrl = "http://127.0.0.1:8000/resumeTransactions/"
+
+
 
   constructor(private http: HttpClient) { }
 
@@ -46,5 +49,22 @@ export class DashboardService {
       'Content-Type': 'application/json'
     });
     return this.http.get<any>(this.listUrl, { headers });
+  }
+
+  getTransactionsCount(access_token: string, year: number, month: number, type: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${access_token}`,
+      'Content-Type': 'application/json'
+    });
+    if (type) {
+      if (year == 0) {
+        return this.http.get<any>(this.sumUrl + "&type_transaction=" + type, { headers });
+      } else if (year != 0 && month == 0) {
+        return this.http.get<any>(this.sumUrl + "?year=" + year+ "&type_transaction=" + type, { headers });
+      } else if (year != 0 && month != 0) {
+        return this.http.get<any>(this.sumUrl + "?year=" + year + "&month=" + month + "&type_transaction=" + type, { headers });
+      }
+    }
+    return of(null); 
   }
 }

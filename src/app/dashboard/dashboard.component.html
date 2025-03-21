@@ -2,18 +2,20 @@
 <main>
     <mat-tab-group>
       <mat-tab label="Résumé">
+        <mat-card appearance="outlined" [ngStyle]="{ 'background-color': messageStyle.backgroundColor }">
+          <mat-card-content>
+            <p>{{ messageContent }}</p>
+          </mat-card-content>
+        </mat-card>
         <mat-card class="example-card" appearance="outlined">
-
           <mat-form-field>
             <mat-label>Choisir une année</mat-label>
             <mat-select [(value)]="selectedYear" (selectionChange)="onYearChange($event.value)">
               @for (year of years; track year) {
                 <mat-option [value]="year.value">{{year.label}}</mat-option>
-                
               }
             </mat-select>
           </mat-form-field>
-
           <mat-form-field>
             <mat-label>Choisir un mois</mat-label>
             <mat-select [disabled]="!canSelect" [(value)]="selectedMonth" (selectionChange)="onYearChange($event.value)">
@@ -22,41 +24,81 @@
               }
             </mat-select>
           </mat-form-field>
-          
           <mat-card-header>
-            <div mat-card-avatar class="example-header-image"></div>
-            <mat-card-title>Dashboard</mat-card-title>
-            <mat-card-subtitle>Resumé de transaction</mat-card-subtitle>
+            <mat-card-title>Resumé des transactions</mat-card-title>
           </mat-card-header>
           <mat-card-content>
             <ng-container *ngIf="resumeData; else noData">
-              <p>Chiffres D'affaire : {{ resumeData.chiffre_affaire }}</p>
-              <p>Argent Net : {{ resumeData.argent_net }}</p>
-              <p>Depenses : {{ resumeData.depenses }}</p>
-              <p>Pertes : {{ resumeData.pertes }}</p>
+              <p>Chiffres D'affaire : {{ resumeData.chiffre_affaire | number:'1.2-2' }} euros</p>
+              <p>Depenses : {{ resumeData.depenses | number:'1.2-2' }} euros</p>
             </ng-container>
-            
             <ng-template #noData>
               <p>Chiffres D'affaire : Non disponible</p>
-              <p>Argent Net : Non disponible</p>
               <p>Depenses : Non disponible</p>
-              <p>Pertes : Non disponible</p>
             </ng-template>
           </mat-card-content>
         </mat-card>
         <canvas #chartCanvas></canvas>
 
+        <mat-card class="example-card" appearance="outlined">
+          
+          <mat-card-header>
+            <mat-card-title>Marge</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ng-container *ngIf="resumeData; else noData">
+              <p>Bénéfices : {{ resumeData.argent_net | number:'1.2-2' }} euros</p>
+              @if (resumeData.argent_net > 0) {
+                <p>Montant d'impot (30%) : {{ resumeData.argent_net * (30/100) | number:'1.2-2'}} euros</p>
+                <p>Bénéfices Net : {{ resumeData.argent_net - (resumeData.argent_net * (30/100)) | number:'1.2-2' }} euros</p>
+              }
+            </ng-container>
+            
+            <ng-template #noData>
+              <p>Bénéfices : Non disponible</p>
+              <p>Montant d'impot (30%) : Non disponible</p>
+              <p>Bénéfices Net : Non disponible</p>
 
+            </ng-template>
+          </mat-card-content>
+        </mat-card>
+        <canvas #chartCanvas2></canvas>
 
+        <mat-card class="example-card" appearance="outlined">
+          <mat-form-field>
+            <mat-label>Choisir un type de transaction</mat-label>
+            <mat-select [(value)]="selectedType" (selectionChange)="onTypeChange($event.value)">
+              @for (type of typeTransaction; track type) {
+                <mat-option [value]="type.value">{{type.label}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-card-header>
+            <mat-card-title>Résumé de produits</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ng-container *ngIf="mostSold; else noMostSold">
+              <ng-container *ngIf="selectedType === 'AJOUT'">
+                <p>Le produit le plus acheté : {{ mostSold.key }} avec {{ mostSold.count }} unité(s)</p>
+              </ng-container>
+              
+              <ng-container *ngIf="selectedType === 'VENTE'">
+                <p>Le produit le plus vendu : {{ mostSold.key }} avec {{ mostSold.count }} unité(s)</p>
+              </ng-container>
+              
+              <ng-container *ngIf="selectedType !== 'AJOUT' && selectedType !== 'VENTE'">
+                <p>Le produit le plus périmé : {{ mostSold.key }} avec {{ mostSold.count }} unité(s)</p>
+              </ng-container>
+            </ng-container>
+            <ng-template #noMostSold>
+              <p>Le produit le plus vendu : Non disponible</p>
+            </ng-template>
+          </mat-card-content>
+        </mat-card>
+
+        <canvas #pieCanvas></canvas>
       </mat-tab>
 
-
-
-
-
-      <!-- <mat-tab label="Résumé par mois">
-        
-      </mat-tab> -->
       <mat-tab label="Liste de transactions">
         <div class="tableContainer">
           <table mat-table [dataSource]="data" class="mat-elevation-z8">                      
@@ -82,7 +124,7 @@
           
           <ng-container matColumnDef="Price">
             <th mat-header-cell *matHeaderCellDef> Prix </th>
-            <td mat-cell *matCellDef="let element"> {{element.price}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.price | number:'1.2-2'}} </td>
           </ng-container>
 
           <ng-container matColumnDef="Total">
